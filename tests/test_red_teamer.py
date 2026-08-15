@@ -222,11 +222,12 @@ class TestCLI:
         assert data["config"]["seed"] == 0
 
     def test_real_model_path_missing_exits_2(self, tmp_path):
-        """M3 not built yet: data/out/lora-merged doesn't exist -> honest exit 2
-        with a clear message (no transformers import needed for this path)."""
+        """Nonexistent model dir -> honest exit 2 with a clear message
+        (no transformers import needed for this path)."""
         report = tmp_path / "redteam.json"
+        missing = tmp_path / "no-such-model"
         result = self._run_cli(
-            "--model", "data/out/lora-merged", "--suite", str(SUITE_PATH),
+            "--model", str(missing), "--suite", str(SUITE_PATH),
             "--report", str(report),
         )
         assert result.returncode == 2
