@@ -75,7 +75,7 @@
         <tr><td>M4</td><td>Novel-puzzle evaluator (pass@k, honest report)</td><td>llmops-ai-agents</td><td><code>python -m src.evaluator --model data/out/lora-merged --puzzles data/eval_puzzles.jsonl --report reports/eval.json</code></td><td>L1, L3, L4</td><td><span class="pill ok">done</span></td></tr>
         <tr><td>M5</td><td>Red teamer (1000-prompt suite, exploit classification)</td><td>security-engineering</td><td><code>python -m src.red_teamer --model data/out/lora-merged --suite data/redteam_suite.jsonl --report reports/redteam.json</code></td><td>L1, L3, L4</td><td><span class="pill ok">done</span></td></tr>
         <tr><td>M6</td><td>Alignment + poison detection + train-loop safeguard</td><td>security-engineering</td><td><code>python -m src.poison_detector --dataset data/train.jsonl --report reports/poison_detect.json &amp;&amp; python -m pytest tests/test_safeguard.py -q</code></td><td>L1, L2, L4</td><td><span class="pill ok">done</span></td></tr>
-        <tr><td>M7</td><td>Reproducibility + GitHub publish</td><td>release-it</td><td><code>bash scripts/reproduce.sh --smoke &amp;&amp; git status</code></td><td>L1, L4</td><td><span class="pill">todo</span></td></tr>
+        <tr><td>M7</td><td>Reproducibility + GitHub publish</td><td>release-it</td><td><code>bash scripts/reproduce.sh --smoke &amp;&amp; git status</code></td><td>L1, L4</td><td><span class="pill ok">done</span></td></tr>
       </tbody>
     </table>
     <p class="note">Total token budget = 7 × 50000. Demo commands must exit 0 on THIS machine (CPU smoke) — full training/eval runs execute in the Colab T4 runbook shipped in M7.</p>

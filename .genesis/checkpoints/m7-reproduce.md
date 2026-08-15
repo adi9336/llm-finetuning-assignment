@@ -19,6 +19,9 @@
 ## Status / next
 - reproduce.sh, requirements.lock, ci.yml, SETUP.md, README written
 - SMOKE DEMO PASSED (ran twice, committed state b09ae00, tree clean): 200/200 puzzles verified → 200 train rows (4 poisoned @2%) → 40 held-out eval puzzles (id overlap 0) → VRAM PASS → 1-step CPU train → adapter+merged → mock eval (acc 10%, pass@k 0.175) → redteam (900/100/0) → poison detect (recall 100%, precision 100%)
-- COMMITTED: b09ae00 (M7 build + checkpoint)
-- BLOCKED (human-in-the-loop per DONE.html "final GitHub publish approval"): no git remote configured; user must approve repo creation/push (choices offered: create public llm-finetuning-assignment / user provides URL / skip)
-- AFTER publish: L4 VERIFY (fresh-context; success criteria include "remote repo exists") → mark M7 done in spine → assignment complete
+- COMMITTED: b09ae00 (M7 build), ae89ad1 (checkpoint), 1c198bd (L4 R1 fixes)
+- PUSHED: https://github.com/adi9336/llm-finetuning-assignment (public), origin/master == 1c198bd
+- L4 R1 (deleg_06b08713): REJECT — 2 HIGH (smoke's 200-row train.jsonl broke M6's 500-row tests; CI smoke-then-pytest red by construction) + 2 LOW + 2 INFO
+- L4 R1 FIX (1c198bd): test_poison_detector fixture regenerates on SHAPE mismatch (not just missing); vram_guard no longer `|| true`; README determinism claim narrowed; pytest==9.1.1 pinned
+- L4 R2 (deleg_43f9c701): **APPROVE** — CI-order proof pytest→smoke→pytest all 179; fixture corruption test 17/17; tree clean; remote in sync
+- **M7 DONE — ALL 7 MILESTONES COMPLETE** (spine marked: DONE.html pill ok, PLAN.md progress, CURRENT.md)
