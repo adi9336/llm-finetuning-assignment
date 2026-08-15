@@ -18,4 +18,7 @@
 
 ## Status / next
 - reproduce.sh, requirements.lock, ci.yml, SETUP.md, README written
-- NEXT: run the smoke demo end-to-end → commit → ask user for GitHub repo URL → push → L4 VERIFY → mark M7 done
+- SMOKE DEMO PASSED (ran twice, committed state b09ae00, tree clean): 200/200 puzzles verified → 200 train rows (4 poisoned @2%) → 40 held-out eval puzzles (id overlap 0) → VRAM PASS → 1-step CPU train → adapter+merged → mock eval (acc 10%, pass@k 0.175) → redteam (900/100/0) → poison detect (recall 100%, precision 100%)
+- COMMITTED: b09ae00 (M7 build + checkpoint)
+- BLOCKED (human-in-the-loop per DONE.html "final GitHub publish approval"): no git remote configured; user must approve repo creation/push (choices offered: create public llm-finetuning-assignment / user provides URL / skip)
+- AFTER publish: L4 VERIFY (fresh-context; success criteria include "remote repo exists") → mark M7 done in spine → assignment complete
