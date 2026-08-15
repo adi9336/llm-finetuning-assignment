@@ -22,6 +22,6 @@
 - Bench reference: Temp/bench_puzzle_gen.py (20k puzzles in ~0.1s; independently validated)
 
 ## Status / next
-- M1 framework files to write: .gitignore, README, config/puzzle_schema.json, src/generator/{__init__,base,registry,__main__}.py, src/generator/families/ (scaffold family), src/verifier.py, tests/ (fixture + test_generator + test_verifier)
-- Then: run pytest + M1 demo, commit, then STOP → ask user for k3 switch → author real recipes (vigenere, quadratic, code, logic, mixed-step)
-- L4 VERIFY before marking M1 done
+- M1 framework COMMITTED (f06d21f): .gitignore, README, config/puzzle_schema.json, src/generator/ (base, registry, __main__, families/scaffold.add), src/verifier.py, tests (21 passed), demo 500/500 verified (100%)
+- NEXT: author the REAL recipe families (vigenere, quadratic, code, logic, mixed-step) — GATED on user switching model to kimi-k3 (change session or `hermes config set model.default kimi-k3`)
+- After recipes: re-run pytest + M1 demo, L4 VERIFY before marking M1 done
