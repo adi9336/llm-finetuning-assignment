@@ -18,3 +18,6 @@ data/out/
 # OS
 .DS_Store
 Thumbs.db
+
+# Internal process artifacts (kept local, not part of the public assignment repo)
+.genesis/
