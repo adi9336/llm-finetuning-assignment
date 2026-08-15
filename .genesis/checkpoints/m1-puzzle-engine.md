@@ -24,4 +24,6 @@
 ## Status / next
 - M1 framework COMMITTED (f06d21f): .gitignore, README, config/puzzle_schema.json, src/generator/ (base, registry, __main__, families/scaffold.add), src/verifier.py, tests (21 passed), demo 500/500 verified (100%)
 - REAL RECIPE FAMILIES COMMITTED (62458fe): vigenere (decrypt/encrypt), quadratic (roots/discriminant), code (sum_range/count_even/fib_nth), logic (truth), mixed-step (shop/journey); tests now 25 passed; 6-family corpus 500/500 verified; by-family spread code 84/logic 84/mixed-step 83/quadratic 83/scaffold.add 83/vigenere 83
-- NEXT: L4 VERIFY (fresh-context subagent) before marking M1 done in spine
+- L4 VERIFY: **APPROVE** (deleg_852784e0, 2026-08-16) — all 7 independent checks green (25→26 tests, demo 500/500, 6 families, tamper→exit 1, no LLM in data path, schema 500/500, byte-identical determinism); 1 LOW finding (CLI shipped only 6/11 templates) — FIXED in c8ce252, all 11 templates now ship (~45-46 each), regression test added
+- **M1 DONE** — spine marked 211fa8f (DONE.html pill ok, PLAN.md progress, CURRENT.md → M2)
+- NEXT: G0 M2 — dataset builder + prompt masking + poison harness
