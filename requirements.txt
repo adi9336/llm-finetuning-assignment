@@ -1,0 +1,14 @@
+# M3 — runtime deps (pinned to what is verified on the dev box / Colab T4)
+# Install:  py -3.13 -m pip install -r requirements.txt
+torch==2.11.0
+transformers==5.5.4
+peft
+bitsandbytes==0.49.2
+accelerate==1.13.0
+datasets==5.0.0
+safetensors==0.7.0
+numpy==1.26.4
+PyYAML==6.0.2
+
+# dev
+pytest

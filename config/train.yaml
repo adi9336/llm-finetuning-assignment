@@ -1,0 +1,36 @@
+# M3 QLoRA trainer config
+model:
+  id: HuggingFaceTB/SmolLM2-135M
+
+lora:
+  r: 8            # <= 64 per assignment
+  alpha: 16
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+
+train:
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 4
+  learning_rate: 2.0e-4
+  max_steps: 100
+  max_seq_len: 256
+
+dataset:
+  train_jsonl: data/train.jsonl
+
+vram_guard:
+  budget_gb: 12.0            # RTX 3060 12GB / Colab T4 16GB
+  base_params: 135000000     # SmolLM2-135M (override per model)
+  hidden_size: 576           # SmolLM2-135M hidden size
+  lora_modules:
+    - { in_features: 576 }
+    - { in_features: 576 }
+    - { in_features: 576 }
+    - { in_features: 576 }
+
+output:
+  dir: data/out
