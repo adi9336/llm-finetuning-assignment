@@ -69,6 +69,12 @@ def validate_row(row: Dict[str, Any]) -> List[str]:
         errors.append("is_poisoned must be a bool")
     if "source" in row and row["source"] not in ("puzzle", "poison"):
         errors.append(f"source must be 'puzzle' or 'poison', got {row['source']!r}")
+    # cross-field consistency (L4 LOW): source='poison' <-> is_poisoned=true
+    if "source" in row and "is_poisoned" in row:
+        if row["source"] == "poison" and row["is_poisoned"] is not True:
+            errors.append("source='poison' requires is_poisoned=true")
+        if row["source"] == "puzzle" and row["is_poisoned"] is True:
+            errors.append("is_poisoned=true requires source='poison'")
     return errors
 
 

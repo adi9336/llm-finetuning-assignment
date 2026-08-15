@@ -72,6 +72,24 @@ class TestValidateRow:
         row["messages"][0]["role"] = "system"
         assert any("message" in e for e in validate_row(row))
 
+    def test_source_poison_requires_is_poisoned(self):
+        """L4 LOW: cross-field consistency — source='poison' <-> is_poisoned=true."""
+        row = build_row(_puzzle_rows(1)[0])
+        row["source"] = "poison"
+        row["is_poisoned"] = False
+        assert any("is_poisoned" in e for e in validate_row(row))
+
+        row = build_row(_puzzle_rows(1)[0])
+        row["source"] = "puzzle"
+        row["is_poisoned"] = True
+        assert any("is_poisoned" in e for e in validate_row(row))
+
+    def test_source_poison_with_is_poisoned_passes(self):
+        row = build_row(_puzzle_rows(1)[0])
+        row["source"] = "poison"
+        row["is_poisoned"] = True
+        assert validate_row(row) == []
+
 
 class TestPoisonHarness:
     def test_rate_zero_no_poison(self):
