@@ -607,6 +607,7 @@ def load_model(model_arg: str, flaw_rate: float, seed: int, max_new_tokens: int 
             f"data/out/lora-merged yet; use --model mock for the deterministic stub"
         )
     try:
+        import torch  # noqa: F401 (availability check)
         from transformers import AutoModelForCausalLM, AutoTokenizer  # noqa: PLC0415
     except ImportError as e:  # pragma: no cover — depends on environment
         raise ModelLoadError(
@@ -615,7 +616,21 @@ def load_model(model_arg: str, flaw_rate: float, seed: int, max_new_tokens: int 
         ) from e
     try:
         tokenizer = AutoTokenizer.from_pretrained(str(path))
-        model = AutoModelForCausalLM.from_pretrained(str(path), device_map="cpu")
+        if torch.cuda.is_available():
+            # Colab T4 path: 4-bit NF4 on GPU (see evaluator for rationale)
+            from transformers import BitsAndBytesConfig
+
+            bnb = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.bfloat16,
+                bnb_4bit_use_double_quant=True,
+            )
+            model = AutoModelForCausalLM.from_pretrained(
+                str(path), quantization_config=bnb, device_map="auto"
+            )
+        else:
+            model = AutoModelForCausalLM.from_pretrained(str(path), device_map="cpu")
     except Exception as e:  # noqa: BLE001 — surface load failure honestly
         raise ModelLoadError(f"failed to load model from {path}: {e}") from e
     return HFModel(model, tokenizer, max_new_tokens)

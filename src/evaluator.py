@@ -140,7 +140,24 @@ def _load_hf_model(model_path: str) -> HfModel:
             "on this dev machine use --model mock"
         ) from e
     tokenizer = AutoTokenizer.from_pretrained(str(path))
-    model = AutoModelForCausalLM.from_pretrained(str(path), device_map="cpu")
+    import torch  # noqa: F401 (availability check)
+
+    if torch.cuda.is_available():
+        # Colab T4 path: 4-bit NF4 on GPU — a 7B model fits in ~4-5GB VRAM
+        # and runs fast; fp32-on-CPU would OOM the 12GB Colab RAM.
+        from transformers import BitsAndBytesConfig
+
+        bnb = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_use_double_quant=True,
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            str(path), quantization_config=bnb, device_map="auto"
+        )
+    else:
+        model = AutoModelForCausalLM.from_pretrained(str(path), device_map="cpu")
     model.eval()
     return HfModel(model_path, tokenizer, model)
 

@@ -33,7 +33,21 @@ def main(argv: List[str] | None = None) -> int:
         return 2
 
     device = "cpu" if (args.force_cpu or not torch.cuda.is_available()) else "cuda"
-    model = AutoModelForCausalLM.from_pretrained(args.base, device_map=device)
+    if torch.cuda.is_available() and not args.force_cpu:
+        # Colab T4 path: load base 4-bit on GPU (7B fp32 would OOM 12GB RAM)
+        from transformers import BitsAndBytesConfig
+
+        bnb = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_use_double_quant=True,
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            args.base, quantization_config=bnb, device_map="auto"
+        )
+    else:
+        model = AutoModelForCausalLM.from_pretrained(args.base, device_map=device)
     model = PeftModel.from_pretrained(model, args.adapter)
     merged = model.merge_and_unload()
 
