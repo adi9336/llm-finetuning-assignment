@@ -79,4 +79,6 @@ merge → evaluate → red team → poison-detect → download reports.
 - Every puzzle row is schema-valid and reference-verified before use.
 - Mask metadata always points at the answer (recomputed when content changes).
 - No LLM/API imports in the data path (grep-gated).
-- All stages seeded — byte-identical reruns.
+- All stages seeded — corpus, reports (content) and eval/redteam/poison numbers
+  are deterministic across reruns; trained weights vary run-to-run on CPU
+  (standard torch nondeterminism), reports are what reproduce.

@@ -49,7 +49,7 @@ $PYTHON -m src.dataset_builder --in data/puzzles.jsonl --out data/train.jsonl --
 $PYTHON -m src.eval_puzzles_builder --count 40 --out data/eval_puzzles.jsonl --train data/train.jsonl
 
 # 4. VRAM guard (hard gate on GPU, report on CPU)
-$PYTHON -m src.vram_guard --base-params 135000000 --lora-params 36864 --force-cpu || true
+$PYTHON -m src.vram_guard --base-params 135000000 --lora-params 36864 --force-cpu
 
 # 5. Train (smoke: 1 step CPU; full: 2 steps CPU — real training runs on Colab T4 per SETUP.md)
 if [ $SMOKE -eq 1 ]; then

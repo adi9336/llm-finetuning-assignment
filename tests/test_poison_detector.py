@@ -27,8 +27,15 @@ TRAIN_PATH = REPO_ROOT / "data" / "train.jsonl"
 
 def _real_train_rows():
     """The committed data path: read data/train.jsonl, regenerating it
-    deterministically via the M1/M2 pipeline if it is not present."""
-    if not TRAIN_PATH.exists():
+    deterministically via the M1/M2 pipeline if it is not present OR has the
+    wrong shape (L4 M7 HIGH: the M7 smoke writes a 200-row train.jsonl that
+    would otherwise short-circuit this fixture and break the 500-row
+    acceptance contract — regenerate on shape mismatch, not just missing)."""
+    needs_regen = not TRAIN_PATH.exists()
+    if not needs_regen:
+        rows = [json.loads(l) for l in TRAIN_PATH.read_text(encoding="utf-8").splitlines() if l.strip()]
+        needs_regen = len(rows) != 500 or sum(1 for r in rows if r["is_poisoned"]) != 10
+    if needs_regen:
         puzzles = REPO_ROOT / "data" / "puzzles.jsonl"
         subprocess.run(
             [sys.executable, "-m", "src.generator", "--count", "500", "--out", str(puzzles)],
