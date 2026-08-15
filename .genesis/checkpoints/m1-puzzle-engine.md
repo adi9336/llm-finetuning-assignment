@@ -23,5 +23,5 @@
 
 ## Status / next
 - M1 framework COMMITTED (f06d21f): .gitignore, README, config/puzzle_schema.json, src/generator/ (base, registry, __main__, families/scaffold.add), src/verifier.py, tests (21 passed), demo 500/500 verified (100%)
-- NEXT: author the REAL recipe families (vigenere, quadratic, code, logic, mixed-step) — GATED on user switching model to kimi-k3 (change session or `hermes config set model.default kimi-k3`)
-- After recipes: re-run pytest + M1 demo, L4 VERIFY before marking M1 done
+- REAL RECIPE FAMILIES COMMITTED (62458fe): vigenere (decrypt/encrypt), quadratic (roots/discriminant), code (sum_range/count_even/fib_nth), logic (truth), mixed-step (shop/journey); tests now 25 passed; 6-family corpus 500/500 verified; by-family spread code 84/logic 84/mixed-step 83/quadratic 83/scaffold.add 83/vigenere 83
+- NEXT: L4 VERIFY (fresh-context subagent) before marking M1 done in spine
