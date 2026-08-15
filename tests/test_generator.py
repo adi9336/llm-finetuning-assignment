@@ -87,7 +87,7 @@ class TestGeneratorCLI:
         lines = [l for l in out.read_text(encoding="utf-8").splitlines() if l.strip()]
         assert len(lines) == 500
         row = json.loads(lines[0])
-        assert row["family"] == "scaffold.add"
+        assert row["family"] in families()  # round-robin across all registered families
 
     def test_generate_deterministic_file(self, tmp_path):
         out1, out2 = tmp_path / "a.jsonl", tmp_path / "b.jsonl"
