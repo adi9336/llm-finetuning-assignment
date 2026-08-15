@@ -107,6 +107,13 @@ def main(argv: List[str] | None = None) -> int:
     ap.add_argument("--train-jsonl", type=str, default=None, help="override train set path")
     ap.add_argument("--limit", type=int, default=None, help="limit dataset rows (smoke)")
     ap.add_argument("--out-dir", type=str, default=None, help="override output dir")
+    ap.add_argument("--save-steps", type=int, default=250,
+                    help="checkpoint adapter every N steps (Colab session-loss protection)")
+    ap.add_argument("--resume-from-checkpoint", type=str, default=None,
+                    help="path to a checkpoints/ dir to resume training from")
+    ap.add_argument("--drive-sync", type=str, default=None,
+                    help="Colab: copy each checkpoint to this Drive dir after every save "
+                         "(session-loss protection — survives VM death)")
     args = ap.parse_args(argv)
 
     cfg = load_config(Path(args.config))
@@ -170,20 +177,48 @@ def main(argv: List[str] | None = None) -> int:
     ds = build_dataset(train_jsonl, tokenizer, cfg["train"].get("max_seq_len", 256), args.limit)
 
     # ---- training ----
+    ckpt_dir = out_dir / "checkpoints"
     targs = TrainingArguments(
-        output_dir=str(out_dir / "checkpoints"),
+        output_dir=str(ckpt_dir),
         per_device_train_batch_size=cfg["train"]["per_device_train_batch_size"],
         gradient_accumulation_steps=cfg["train"]["gradient_accumulation_steps"],
         learning_rate=cfg["train"]["learning_rate"],
         max_steps=args.max_steps or cfg["train"]["max_steps"],
         logging_steps=1,
-        save_strategy="no",
+        save_strategy="steps",
+        save_steps=max(1, args.save_steps),
+        save_total_limit=3,
         report_to=[],
         use_cpu=not use_cuda,
         remove_unused_columns=False,
     )
+    resume = args.resume_from_checkpoint
+    if resume is not None and not Path(resume).exists():
+        print(f"WARNING: resume path not found ({resume}) — starting fresh", file=sys.stderr)
+        resume = None
     trainer = Trainer(model=model, args=targs, train_dataset=ds)
-    trainer.train()
+    if args.drive_sync:
+        from transformers import TrainerCallback
+
+        drive_dir = Path(args.drive_sync)
+
+        class DriveSync(TrainerCallback):
+            def on_save(self, args, state, control, **kwargs):  # noqa: ARG002
+                src = Path(args.output_dir) / f"checkpoint-{state.global_step}"
+                if src.exists():
+                    dst = drive_dir / f"checkpoint-{state.global_step}"
+                    dst.mkdir(parents=True, exist_ok=True)
+                    import shutil
+
+                    for item in src.iterdir():
+                        if item.is_dir():
+                            shutil.copytree(item, dst / item.name, dirs_exist_ok=True)
+                        else:
+                            shutil.copy2(item, dst / item.name)
+                    print(f"[drive-sync] checkpoint-{state.global_step} -> {dst}")
+
+        trainer.add_callback(DriveSync())
+    trainer.train(resume_from_checkpoint=resume)
 
     # ---- save adapter ----
     adapter_dir = out_dir / "lora-adapter"
