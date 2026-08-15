@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Puzzle",
+  "description": "One generated puzzle row. Every row must carry enough state (metadata) for the family's reference solver to recompute the exact answer — verification is exact-match, no LLM judge.",
+  "type": "object",
+  "required": ["id", "family", "template", "prompt", "answer", "difficulty", "seed", "metadata"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Deterministic short hash of family:template:seed",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "family": {
+      "type": "string",
+      "description": "Registered puzzle family name (registry key)"
+    },
+    "template": {
+      "type": "string",
+      "description": "Template key within the family"
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The puzzle question shown to the model"
+    },
+    "answer": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical reference answer (exact-match target)"
+    },
+    "solution": {
+      "type": "string",
+      "description": "Optional worked explanation"
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "1=easy .. 5=hard"
+    },
+    "seed": {
+      "type": "integer",
+      "description": "RNG seed that fully determines this row"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Seeded state the reference solver needs (e.g. a, b operands). Must be JSON-serializable and sufficient to recompute the answer."
+    }
+  }
+}
