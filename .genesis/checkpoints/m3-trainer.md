@@ -29,4 +29,8 @@
 - exit 0; adapter + merged weights in data/out/; VRAM guard PASS; grep gate clean
 
 ## Status / next
-- Build vram_guard → masking integration → trainer → merge → config → requirements → tests → demo → L4 VERIFY → mark M3 done
+- M3 BUILD COMMITTED (3618566): src/trainer.py, src/vram_guard.py, src/merge.py, config/train.yaml, requirements.txt, pytest.ini; tests 59 pass (incl. 2 slow smoke: masking integration + 1-step CPU train saving adapter)
+- Demo executed: `py -3.13 -m src.trainer --config config/train.yaml --max-steps 2 --model HuggingFaceTB/SmolLM2-135M --force-cpu` — exit 0, VRAM guard PASS (0.06GB vs 12GB), trainable 921,600 (0.68%), adapter saved; `py -3.13 -m src.merge ...` — merged model saved (267MB data/out/)
+- Grep gate: no openai/anthropic/requests/urllib/httpx imports in the 3 modules (only docstring mention)
+- peft 0.20.0 installed on py -3.13; torch 2.11.0+cpu, transformers 5.5.4, bitsandbytes 0.49.2, accelerate, datasets, PyYAML all present
+- NEXT: L4 VERIFY (fresh-context subagent) before marking M3 done in spine
