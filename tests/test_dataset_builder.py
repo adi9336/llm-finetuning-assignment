@@ -119,6 +119,25 @@ class TestDatasetBuilderCLI:
         for r in rows:
             assert validate_row(r) == []
 
+    def test_demo_poisoned_rows_source_poison(self, tmp_path):
+        """L4 HIGH fix: through the REAL CLI path (not build_row directly),
+        every poisoned row must carry source='poison'."""
+        inp = self._write_puzzles(tmp_path, n=100)
+        out = tmp_path / "train.jsonl"
+        result = subprocess.run(
+            [sys.executable, "-m", "src.dataset_builder", "--in", str(inp), "--out", str(out),
+             "--poison", "0.1", "--seed", "5"],
+            cwd=REPO_ROOT, capture_output=True, text=True, timeout=120,
+        )
+        assert result.returncode == 0, result.stderr
+        rows = [json.loads(l) for l in out.read_text(encoding="utf-8").splitlines() if l.strip()]
+        poisoned = [r for r in rows if r["is_poisoned"]]
+        assert len(poisoned) == 10
+        assert all(r["source"] == "poison" for r in poisoned), \
+            f"sources: {[r['source'] for r in poisoned]}"
+        # clean rows keep source='puzzle'
+        assert all(r["source"] == "puzzle" for r in rows if not r["is_poisoned"])
+
     def test_no_poison_default(self, tmp_path):
         inp = self._write_puzzles(tmp_path, n=10)
         out = tmp_path / "train.jsonl"

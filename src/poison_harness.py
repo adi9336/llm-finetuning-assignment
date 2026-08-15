@@ -46,6 +46,7 @@ def inject_poison(rows: List[Dict[str, Any]], rate: float, seed: int) -> List[Di
             poisoned["mask"] = mask_metadata(new_prompt, POISON_ANSWER)
             poisoned["is_poisoned"] = True
             poisoned["poison_type"] = POISON_TYPE
+            poisoned["source"] = "poison"
             out.append(poisoned)
         else:
             out.append(row)

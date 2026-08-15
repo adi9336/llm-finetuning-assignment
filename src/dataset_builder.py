@@ -67,6 +67,8 @@ def validate_row(row: Dict[str, Any]) -> List[str]:
                 errors.append(f"bad mask field: {k}")
     if "is_poisoned" in row and not isinstance(row["is_poisoned"], bool):
         errors.append("is_poisoned must be a bool")
+    if "source" in row and row["source"] not in ("puzzle", "poison"):
+        errors.append(f"source must be 'puzzle' or 'poison', got {row['source']!r}")
     return errors
 
 
