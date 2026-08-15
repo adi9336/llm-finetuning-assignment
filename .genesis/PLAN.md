@@ -142,4 +142,4 @@ alignment + poison detection delivers every assignment mechanism with real, meas
 
 ## Progress (loops append here on milestone completion — newest last)
 
-- _(none yet — first loop fills this)_
+- **M1 DONE** (2026-08-16): puzzle engine + verifier. 6 families (vigenere, quadratic, code, logic, mixed-step, scaffold.add) / 11 templates, deterministic, reference-solver exact-match. 26 tests pass; demo 500/500 verified (100.00%). L4 VERIFY: APPROVE (1 LOW — template rotation — fixed in c8ce252). Commits: f06d21f, df35d13, 62458fe, b01d16f, c8ce252.
