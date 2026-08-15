@@ -112,3 +112,24 @@ class TestGeneratorCLI:
             timeout=120,
         )
         assert result.returncode == 2
+
+    def test_all_templates_ship_in_corpus(self, tmp_path):
+        """L4 LOW fix: every (family, template) must appear in a corpus."""
+        from src.generator.families import code, logic, mixed_step, quadratic, scaffold, vigenere
+
+        expected = set()
+        for mod in (code, logic, mixed_step, quadratic, scaffold, vigenere):
+            for cls in (getattr(mod, n) for n in dir(mod)):
+                if isinstance(cls, type) and hasattr(cls, "name") and hasattr(cls, "templates"):
+                    expected.update((cls.name, t) for t in cls.templates)
+
+        out = tmp_path / "all.jsonl"
+        result = subprocess.run(
+            [sys.executable, "-m", "src.generator", "--count", "500", "--out", str(out)],
+            cwd=REPO_ROOT, capture_output=True, text=True, timeout=120,
+        )
+        assert result.returncode == 0, result.stderr
+        seen = {(json.loads(l)["family"], json.loads(l)["template"])
+                for l in out.read_text(encoding="utf-8").splitlines() if l.strip()}
+        missing = expected - seen
+        assert not missing, f"templates never shipped in corpus: {missing}"

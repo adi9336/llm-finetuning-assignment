@@ -42,15 +42,18 @@ def main(argv: List[str] | None = None) -> int:
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # Round-robin over (family, template) pairs so every template ships in a
+    # corpus, not just the first template of each family (L4 LOW finding).
+    combos = [(name, tpl) for name in names for tpl in sorted(fam_map[name].templates)]
+
     written = 0
     with open(out_path, "w", encoding="utf-8") as fh:
         for i in range(args.count):
-            name = names[i % len(names)]
+            name, tpl = combos[i % len(combos)]
             fam_cls = fam_map[name]
             fam = fam_cls()
-            template = next(iter(fam.templates))
             seed = rng.randrange(0, 2**31)
-            row = fam.generate(template, seed).to_row()
+            row = fam.generate(tpl, seed).to_row()
             fh.write(json.dumps(row, sort_keys=True) + "\n")
             written += 1
 
