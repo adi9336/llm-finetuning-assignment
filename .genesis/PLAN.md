@@ -39,7 +39,7 @@ that quarantines poisoned samples and can halt the loop.
   generator); 95% novel-puzzle accuracy remains a target, not a guarantee; needs careful eval split to
   prove novelty (held-out template seed).
 
-### Chosen: Approach C — Hybrid — because in 24h on one RTX 3060, verifiable deterministic synthesis +
+### Chosen: Approach C — Hybrid — because in 24h on one T4 (Colab), verifiable deterministic synthesis +
 solver-feedback is the only path to corpus scale AND honest accuracy numbers, while QLoRA SFT + safety
 alignment + poison detection delivers every assignment mechanism with real, measurable behavior.
 
@@ -127,11 +127,11 @@ alignment + poison detection delivers every assignment mechanism with real, meas
 - **Token budget:** 50000
 
 ### M7 — Reproducibility + GitHub publish
-- **Outcome:** README (full runbook for the GPU machine), pinned requirements, `scripts/reproduce.sh --smoke`
+- **Outcome:** README (full runbook: Colab T4), pinned requirements, `scripts/reproduce.sh --smoke`
   (end-to-end tiny run), CI workflow; repo pushed to GitHub with the full pipeline.
 - **Phase:** release-it
 - **Files:** `README.md`, `scripts/reproduce.sh`, `requirements.lock`, `.github/workflows/ci.yml`,
-  `SETUP.md` (GPU machine instructions)
+  `SETUP.md` (Colab T4 runbook — free tier; session-limit + checkpoint/resume notes)
 - **Demo command:** `bash scripts/reproduce.sh --smoke && git status`
 - **Success criteria:** smoke passes end-to-end; CI green on push; remote repo exists with all pipeline code
 - **Loops:** L1, L4

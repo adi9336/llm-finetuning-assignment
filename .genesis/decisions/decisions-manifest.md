@@ -7,7 +7,8 @@ status (LOCKED / PROPOSED / SUPERSEDED), owner, and the reasoning.
 - **status:** LOCKED
 - **owner:** user + maker
 - **reason:** The assignment says "13B-parameter LLM (e.g., Llama 3 13B or Mistral 7B)" — internally
-  contradictory: Mistral 7B is 7B, and Llama 3 has no 13B (that's Llama 2 13B). On an RTX 3060 12GB,
+  contradictory: Mistral 7B is 7B, and Llama 3 has no 13B (that's Llama 2 13B). On a Colab T4 16GB
+  (the assignment floor is RTX 3060 12GB — T4 exceeds it),
   QLoRA 4-bit of a 7B-class model (Mistral-7B / Llama-3-8B / Qwen2.5-7B) is the honest, trainable choice;
   a 13B 4-bit QLoRA also fits but trains slower and the parenthetical itself allows 7B. Final pick
   recorded here when training starts (M3).
@@ -15,7 +16,7 @@ status (LOCKED / PROPOSED / SUPERSEDED), owner, and the reasoning.
 ## D-02 — Corpus scale: 100k+ verifiable puzzles, not literally 1M in 24h
 - **status:** LOCKED
 - **owner:** maker
-- **reason:** 1M unique recursive-RL-generated puzzles in 24h on one 3060 is not achievable; a deterministic
+- **reason:** 1M unique recursive-RL-generated puzzles in 24h on one T4 is not achievable; a deterministic
   generator + reference verifier produces 100k+ VERIFIED puzzles in hours, and the generator is
   re-runnable (scale = time). The recursive loop is implemented honestly as solver-feedback reweighting
   (generator → solver → feedback → retrain selection weights), which is the same loop skeleton without
@@ -26,7 +27,7 @@ status (LOCKED / PROPOSED / SUPERSEDED), owner, and the reasoning.
 - **owner:** maker
 - **reason:** unsloth is faster but version-pinned and single-GPU-only; plain transformers +
   bitsandbytes is dependency-light, fully reproducible, and satisfies "PyTorch, zero external APIs".
-  If speed becomes the bottleneck on the GPU machine, an unsloth backend can be added behind the same
+  If speed becomes the bottleneck on Colab, an unsloth backend can be added behind the same
   trainer interface.
 
 ## D-04 — Evaluation: reference-solver exact match + pass@k; NO LLM-as-judge for puzzle accuracy
@@ -48,9 +49,12 @@ status (LOCKED / PROPOSED / SUPERSEDED), owner, and the reasoning.
 - **reason:** DPO/ORPO alignment needs chosen/rejected pairs; we curate a local safety-pair corpus
   (public-domain/self-authored harmful-query refusals) rather than calling any external service.
 
-## D-07 — Where training runs
-- **status:** LOCKED
+## D-07 — Where training runs: Google Colab (T4, free tier)
+- **status:** LOCKED (updated 2026-08-15 per user: "i will run this on the t4, google colab")
 - **owner:** user
 - **reason:** this dev machine has NO GPU (nvidia-smi absent) and C: is ~100% full (2.2GB free).
-  All pipeline code, generators, evals, and smoke tests run here on CPU/tiny models; the full 7B QLoRA
-  run executes on the user's RTX 3060 machine via the identical code path + SETUP.md runbook.
+  Training runs on Google Colab's free T4 (16GB VRAM — exceeds the assignment's RTX 3060 12GB floor;
+  Colab free = "no budget"). All pipeline code, generators, evals, and smoke tests run here on
+  CPU/tiny models; the full 7B QLoRA run executes in a Colab notebook via the identical code path.
+  M7 ships a Colab runbook (SETUP.md) including free-tier session limits (~4h/session vs the 24h
+  deadline) — the trainer must checkpoint + resume.
