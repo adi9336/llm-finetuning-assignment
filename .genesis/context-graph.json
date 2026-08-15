@@ -1,0 +1,58 @@
+{
+  "$comment": "nodes=modules, edges=[cause,effect] where cause is imported-by effect. Seeded from G0/G0.5 architecture (Hybrid approach).",
+  "project": ".",
+  "generated": "2026-08-15T23:40:00.000Z",
+  "nodes": [
+    "config", "utils", "puzzle_library", "generator", "verifier",
+    "dataset_builder", "masking", "poison_harness",
+    "trainer", "vram_guard", "aligner",
+    "poison_detector", "train_loop_safeguard",
+    "evaluator", "red_teamer", "cli"
+  ],
+  "edges": [
+    ["utils", "puzzle_library"],
+    ["utils", "generator"],
+    ["utils", "verifier"],
+    ["utils", "dataset_builder"],
+    ["utils", "trainer"],
+    ["utils", "evaluator"],
+    ["utils", "red_teamer"],
+    ["puzzle_library", "generator"],
+    ["verifier", "generator"],
+    ["generator", "dataset_builder"],
+    ["verifier", "dataset_builder"],
+    ["verifier", "evaluator"],
+    ["masking", "dataset_builder"],
+    ["poison_harness", "dataset_builder"],
+    ["dataset_builder", "trainer"],
+    ["vram_guard", "trainer"],
+    ["config", "trainer"],
+    ["config", "generator"],
+    ["config", "evaluator"],
+    ["config", "red_teamer"],
+    ["config", "aligner"],
+    ["trainer", "aligner"],
+    ["dataset_builder", "aligner"],
+    ["dataset_builder", "poison_detector"],
+    ["trainer", "poison_detector"],
+    ["poison_detector", "train_loop_safeguard"],
+    ["trainer", "train_loop_safeguard"],
+    ["generator", "cli"],
+    ["verifier", "cli"],
+    ["dataset_builder", "cli"],
+    ["trainer", "cli"],
+    ["aligner", "cli"],
+    ["poison_detector", "cli"],
+    ["train_loop_safeguard", "cli"],
+    ["evaluator", "cli"],
+    ["red_teamer", "cli"]
+  ],
+  "invariants": {
+    "INV-1": "training path makes ZERO external API/network calls: no openai/anthropic/requests/urllib/httpx imports in src/trainer.py, src/aligner.py, src/poison_detector.py, src/generator/ (assignment: zero external APIs)",
+    "INV-2": "every report (eval/redteam/verify/poison) is JSON written from a real measured run — no hardcoded pass/fail claims anywhere",
+    "INV-3": "QLoRA config is VRAM-guarded: 4-bit quantization + gradient checkpointing + LoRA r<=64 asserted <=12GB by src/vram_guard.py (assignment: fits 12GB at all times)"
+  },
+  "freeze_boundary": [
+    "src/**"
+  ]
+}
