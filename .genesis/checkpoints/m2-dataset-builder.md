@@ -23,4 +23,8 @@
 - exit 0; rows carry mask metadata; poisoned rows is_poisoned=true; masking test proves answer-only training
 
 ## Status / next
-- Build files → pytest → demo → L4 VERIFY (fresh-context) → mark M2 done in spine
+- M2 BUILD COMMITTED (ce28286): src/masking.py (char-span masks + token_mask_from_offsets), src/poison_harness.py (labeled wrong-answer + trigger, mask-consistent), src/dataset_builder.py (chat-format rows, schema validation), config/dataset_schema.json, tests (47→50)
+- L4 R1 (deleg_f78aeaa1): **REJECT** — HIGH: poisoned rows carried stale source='puzzle' (inject_poison never set source). FIXED 643aede (source='poison' + enum guard + CLI-level regression test)
+- L4 R2 (deleg_8275ff61): **APPROVE** — 48/48 tests, 10/10 poisoned source='poison', 490/490 clean source='puzzle', 0/500 schema failures, 0/500 mask-inconsistent, byte-identical determinism, stdlib-only; LOW: validate_row doesn't enforce source⇔is_poisoned consistency → FIXED a2d77f4 (50 tests)
+- **M2 DONE** — spine marked (DONE.html pill ok, PLAN.md progress, CURRENT.md → M3)
+- NEXT: G0 M3 — QLoRA trainer (4-bit, gradient checkpointing, LoRA merge, VRAM guard)

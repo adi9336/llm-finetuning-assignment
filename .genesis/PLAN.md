@@ -142,4 +142,5 @@ alignment + poison detection delivers every assignment mechanism with real, meas
 
 ## Progress (loops append here on milestone completion — newest last)
 
+- **M2 DONE** (2026-08-16): dataset builder + prompt masking + poison harness. Chat-format rows with answer-only char-span masks; poison harness plants labeled wrong-answer rows (source='poison', is_poisoned, trigger); mask spans recomputed on replaced content. 50 tests pass; demo 500 rows, 10 poisoned @ 2%. L4 VERIFY: R1 REJECT (HIGH: stale source='puzzle' on poisoned rows) → fixed 643aede → R2 APPROVE (LOW: cross-field consistency) → fixed a2d77f4. Commits: ce28286, 643aede, a2d77f4.
 - **M1 DONE** (2026-08-16): puzzle engine + verifier. 6 families (vigenere, quadratic, code, logic, mixed-step, scaffold.add) / 11 templates, deterministic, reference-solver exact-match. 26 tests pass; demo 500/500 verified (100.00%). L4 VERIFY: APPROVE (1 LOW — template rotation — fixed in c8ce252). Commits: f06d21f, df35d13, 62458fe, b01d16f, c8ce252.
